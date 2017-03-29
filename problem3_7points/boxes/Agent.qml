@@ -33,7 +33,7 @@ Rectangle {
 
         radius: agentBall.radius
         density: 0.9
-        friction: 0.9
+        friction: 0
         restitution: 0.2
     }
     Text{

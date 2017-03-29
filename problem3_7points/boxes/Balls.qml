@@ -12,9 +12,6 @@ Image {
     property alias agentList: agentRepeater.model
     property alias agentRepeater: agentRepeater
 
-
-
-
     Repeater{
         id: agentRepeater
         model: agents
@@ -25,7 +22,8 @@ Image {
                 id: agent
                 x: (initialX-75)/500*(screen.width-100) //Math.random() * (screen.width )
                 y: initialY/300*(screen.height/3) //Math.random() * (screen.height / 3)
-                agentColor:"pink"
+//                agentColor:"light blue"
+                agentColor: selfcolor
                 nextWaypoint: firstWaypoint
 
             }

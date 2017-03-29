@@ -18,6 +18,7 @@ Rectangle{
                     agentID: "e1"
                     initialX: 150
                     initialY: 180
+                    selfcolor: "orange"
                     firstWaypoint: 1
 
                 }
@@ -26,16 +27,44 @@ Rectangle{
                     agentID: "e2"
                     initialX: 230
                     initialY: 180
+                    selfcolor: "pink"
                     firstWaypoint: 1
                 }
 
-//                ListElement {
-//                    agentID: "e3"
-//                    initialX: 190
-//                    initialY: 255
-//                    firstWaypoint: 3
+                ListElement {
+                    agentID: "e3"
+                    initialX: 300
+                    initialY: 50
+                    selfcolor: "red"
+                    firstWaypoint: 5
 
-//                }
+                }
+
+                ListElement {
+                    agentID: "e4"
+                    initialX: 500
+                    initialY: 255
+                    selfcolor: "green"
+                    firstWaypoint: 4
+
+                }
+
+                ListElement {
+                    agentID: "e5"
+                    initialX: 190
+                    initialY: 500
+                    selfcolor: "light blue"
+                    firstWaypoint: 3
+
+                }
+
+                ListElement {
+                    agentID: "e6"
+                    initialX: 190
+                    initialY: 400
+                    selfcolor: "blue"
+                    firstWaypoint: 7
+                }
             }
             ListModel{
                 id:waypoints
@@ -84,7 +113,7 @@ Rectangle{
                 onStepped: {
                         // this is like a tick function: every step of simulation
                         var i;
-                        for (i=0;i<2;i++){
+                        for (i=0;i<6;i++){
                             //get the ball with index i
                             var agentball = balls.agentRepeater.itemAt(i).agent;
                             var tbody = balls.agentRepeater.itemAt(i).agent.body;
@@ -106,7 +135,7 @@ Rectangle{
                             //normalize the direction
                             var r = Math.sqrt(Math.pow(direction.x,2)+Math.pow(direction.y,2));
                             // if r is small, pick a new waypoint
-                            if (r<2 ){
+                            if (r<5 ){
                                 // update the previous, current and next waypoint once the ball reach its nextwaypoint
                                 agentball.previous_waypoint = agentball.current_waypoint;
                                 agentball.current_waypoint = nextWaypoint;
@@ -123,13 +152,30 @@ Rectangle{
                             direction.x = direction.x/r;
                             direction.y = direction.y/r;
                             // set the desired speed
-                            var desiredSpeed = 6;
+                            var desiredSpeed = 4;
+                            if(i == 1){
+                                desiredSpeed = 6;
+                            }else if(i == 2){
+                                desiredSpeed = 5;
+                            }else if(i == 0){
+                                desiredSpeed = 10;
+                            }else if(i == 3){
+                                desiredSpeed = 8;
+                            }else if(i == 4){
+                                desiredSpeed = 3;
+                            }else if(i == 5){
+                                desiredSpeed = 1;
+                            }
                             // scale the normalized direction by the desired speed to get the desired velocity
                             var desiredVelocity =Qt.point(desiredSpeed*direction.x,desiredSpeed*direction.y);
 
                             // set the linear velocity
                             tbody.linearVelocity.x= desiredVelocity.x;
                             tbody.linearVelocity.y= desiredVelocity.y;
+//                            if(Math.pow(tbody.linearVelocity.x,2) + Math.pow(tbody.linearVelocity.y,2) < 1){
+//                                tbody.linearVelocity.x= 5;
+//                                tbody.linearVelocity.y= 5;
+//                            }
                         }
 
                     }
