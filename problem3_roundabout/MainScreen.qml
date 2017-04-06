@@ -195,13 +195,6 @@ Rectangle{
                             tbody.linearVelocity.y= desiredVelocity.y;
                         }
 
-                        // change the joint
-
-                        var jointcenter = mixerRight.body.getWorldCenter();
-                        if((jointcenter.x <= 270 && changebutton.flag == 2)  || (jointcenter.y <= 270 && changebutton.flag == 1)){
-                            mixerRightJoint.motorSpeed = 0;
-                            mixerRight.bodyType = Body.Static;
-                        }
                     }
 
                 function get_next(current_vertex,previous_vertex){
@@ -242,90 +235,6 @@ Rectangle{
                     agentList: agents
             }
 
-            // define four blocks
-            QtBoxes.WoodenBox{
-                x:20
-                y:290
-                width: 250
-                height:250
-            }
-
-            QtBoxes.WoodenBox{
-                id: box1
-                x:20
-                y:20
-                width: 250
-                height:250
-            }
-
-            QtBoxes.WoodenBox{
-                x:290
-                y:20
-                width: 250
-                height:250
-            }
-
-            QtBoxes.WoodenBox{
-                x:290
-                y:290
-                width: 250
-                height:250
-            }
-
-            PhysicsItem {
-                id: mixerRight
-                x: 500
-                y: 500
-                width: 5
-                height: 15
-                bodyType: Body.Dynamic
-                fixtures: Box {
-                    width: mixerRight.width
-                    height: mixerRight.height
-                    density: 0.5
-                }
-                Rectangle {
-                    anchors.fill: parent
-                    color: "yellow"
-                    antialiasing: true
-                }
-            }
-
-            RevoluteJoint {
-                id: mixerRightJoint
-                bodyA: box1.body
-                bodyB: mixerRight.body
-                localAnchorA: Qt.point(250,250)
-                localAnchorB: Qt.point(2.5,0)
-                enableMotor: true
-                motorSpeed: -90
-                maxMotorTorque: 10000
-                //enableLimit: true
-                //lowerAngle: 90
-                //upperAngle: 30
-            }
-
-            Button{
-                id: changebutton
-                x:100
-                y:100
-                height: 50
-                width: 100
-                text: "change"
-                onClicked: onchange()
-                property int flag : 1;
-                function onchange(){
-                    if(flag == 1){
-                        flag = 2;
-                        mixerRightJoint.motorSpeed =  200;
-                        mixerRight.bodyType = Body.Dynamic;
-                    }else{
-                        flag = 1;
-                        mixerRightJoint.motorSpeed = -200;
-                        mixerRight.bodyType = Body.Dynamic;
-                    }
-                }
-          }
 
             DebugDraw {
                 id: debugDraw
@@ -352,5 +261,120 @@ Rectangle{
                     onClicked: debugDraw.visible = !debugDraw.visible;
                 }
             }
+
+            PhysicsItem {
+                id: prop
+                height: 560
+                y: 0
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                fixtures: [
+                    Polygon {
+                        vertices: [
+                            Qt.point(20,20),
+                            Qt.point(270,20),
+                            Qt.point(270,250),
+                            Qt.point(250,270),
+                            Qt.point(20,270)
+                        ]
+                        density: 0.5
+                        friction: 0
+                    },
+
+                    Polygon {
+                        vertices: [
+                            Qt.point(310,290),
+                            Qt.point(290,310),
+                            Qt.point(290,540),
+                            Qt.point(540,540),
+                            Qt.point(540,290)
+                        ]
+                        density: 0.5
+                        friction: 0
+                    },
+
+                    Polygon {
+                        vertices: [
+                            Qt.point(20,290),
+                            Qt.point(250,290),
+                            Qt.point(270,310),
+                            Qt.point(270,540),
+                            Qt.point(20,540)
+                        ]
+                        density: 0.5
+                        friction: 0
+                    },
+                    Polygon {
+                        vertices: [
+                            Qt.point(290,20),
+                            Qt.point(540,20),
+                            Qt.point(540,270),
+                            Qt.point(310,270),
+                            Qt.point(290,250)
+                        ]
+                        density: 0.5
+                        friction: 0
+                    }
+                ]
+                Canvas {
+                    id: propCanvas
+                    anchors.fill: parent
+                    onPaint: {
+                        var context = propCanvas.getContext("2d");
+                        context.beginPath();
+                        var fixtures = prop.fixtures;
+                        var count = fixtures.count;
+                        for(var i = 0;i < fixtures.length;i ++) {
+                            var fixture = fixtures[i];
+                            var vertices = fixture.vertices;
+                            context.moveTo(vertices[0].x,vertices[0].y);
+                            for(var j = 1;j < vertices.length;j ++) {
+                                context.lineTo(vertices[j].x,vertices[j].y);
+                            }
+                            context.lineTo(vertices[0].x,vertices[0].y);
+                        }
+                        context.fillStyle = "#488AC7";
+                        context.fill();
+                    }
+                }
+            }
+
+            Rectangle {
+                id: roundabout
+
+                property color agentColor: "yellow"
+
+                x: 280
+                y:280
+                width: 10
+                height: 10
+                radius: 5
+                color: agentColor
+                border.color: "black"
+                smooth: true
+
+                property Body body: circleBody
+
+                CircleBody {
+                    id: circleBody
+                    x:280
+                    y:280
+                    target: agentBall
+                    world: physicsWorld
+
+                    bullet: true
+                    bodyType: Body.Static
+
+                    radius: agentBall.radius
+                    density: 0.9
+                    friction: 0
+                    restitution: 0.2
+                }
+            }
+
+
+
+
 }
 
